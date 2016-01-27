@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html> 
+<head> 
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" /> 
+  <title>GoogleMaps pakring lokacije</title> 
+  <script src="http://maps.google.com/maps/api/js?sensor=false" 
+          type="text/javascript"></script>
+</head> 
+<body>
+  <div id="map" style="width: auto; height: auto; min-width:500px; min-height:800px"></div>
+
+  <script type="text/javascript">
+  // TO-DO: GET JSON from somewhere (ajax)
+  // http://rest.learncode.academy/api/jernejm/lokacije
+
+    var locations = [{"parkingID":33,"latitude":46.0530278,"longitude":14.488073,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 12:35:09.0"},{"parkingID":34,"latitude":46.0500301,"longitude":14.508074,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 12:39:36.0"},{"parkingID":35,"latitude":46.3800213,"longitude":14.4879432,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 13:02:29.0"},{"parkingID":36,"latitude":46.0350181,"longitude":14.4580478,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 13:37:00.0"},{"parkingID":37,"latitude":46.0500173,"longitude":14.4880554,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 13:37:12.0"},{"parkingID":38,"latitude":46.0800523,"longitude":14.4879745,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 17:02:42.0"},{"parkingID":39,"latitude":46.0500475,"longitude":14.5581284,"address":"&Scaron;krab&#x10d;eva ulica 19a, 1000 Ljubljana","startParking":"2016-01-18 17:56:21.0"}];;
+    console.log(typeof(locations[0]));
+    // console.log(locations[0].latitude, locations[0].longitude);
+
+    var map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 12, // TO-DO: auto zoom using latlngbound.center
+      center: new google.maps.LatLng(locations[0].latitude, locations[0].longitude),
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+
+    var infowindow = new google.maps.InfoWindow();
+
+    // gMaps bounds
+    var latlngbounds = new google.maps.LatLngBounds();
+    // Markers
+    var marker, i;
+    for (i = 0; i < locations.length; i++) {  
+      marker = new google.maps.Marker({
+        position: new google.maps.LatLng(locations[i].latitude, locations[i].longitude),
+        map: map
+      })
+      // bounds
+      {
+        // latlngbounds.extend(new google.maps.latlng(locations[i].latitude, locations[i].longitude));
+      }
+
+      ;
+
+      google.maps.event.addListener(marker, 'click', (function(marker, i) {
+        return function() {
+          infowindow.setContent(locations[i].address);
+          infowindow.open(map, marker);
+        }
+      })(marker, i));
+    }
+
+  </script>
+</body>
+</html>
