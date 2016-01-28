@@ -31,17 +31,43 @@ function showTable (data) {
 			"<td>" + item.startParking + "</td>" + 
 			"<td>" + "1:25" + "</td>" +
 			"<td><span class = 'glyphicon glyphicon-remove' onClick='izbrisi(\"" + item.parkingID + "\")'></span></td>" +
-			"<td><span class = 'glyphicon glyphicon-edit' data-toggle='modal' data-target='#myModal' onClick='uredi(\"" + item.parkingID + "\")'></span></td>" +
+			// "<td><span class = 'glyphicon glyphicon-edit' data-toggle='modal' data-target='#myModal' onClick='uredi(\"" + item + "\")'></span></td>" +
+            "<td><span class='glyphicon glyphicon-trash' data-toggle='modal' data-target='#delete' onClick='izbrisi(\"" + item.parkingID + "\")'></span></td>" +
 			"</tr>");
 		// return data;
 	});
+    $("[data-toggle=tooltip]").tooltip();
 	$("#tabela table tbody").html(items.join(" "));
 	//console.log(data);
 }
 
 // ==========================================================================================
-// Show google maps inside iFrame
+// Delete item
+function izbrisi(id){
+	$.ajax({
+        type: 'DELETE',
+        url: 'http://localhost:8080/ParkirajWeb/web/V1_web/parkingID='+id,
+        success: function() {
+            getData();
+            }
+        });
+    }
 
+
+// ==========================================================================================
+// Edit item
+// TODO:
+    // Open new google maps instance in bootstrap modal.
+    // Enable marker editing
+    // Reverse geocoder to get address from marker position
+function uredi(item){
+    $.ajax({})
+	// alert(item.id);
+}
+
+
+// ==========================================================================================
+// Show google maps inside iFrame
 function showMapsIFrame() {
       // TO-DO: GET JSON from somewhere (ajax)
   // http://rest.learncode.academy/api/jernejm/lokacije
@@ -114,28 +140,4 @@ function drawMap(items){
       i++;
     }
 }
-}
-
-// ==========================================================================================
-// Delete item
-function izbrisi(id){
-	$.ajax({
-        type: 'DELETE',
-        url: 'http://localhost:8080/ParkirajWeb/web/V1_web/parkingID='+id,
-        success: function() {
-            getData();
-            }
-        });
-    }
-
-
-// ==========================================================================================
-// Edit item
-// TODO:
-    // Open new google maps instance in bootstrap modal.
-    // Enable marker editing
-    // Reverse geocoder to get address from marker position
-function uredi(id){
-
-	alert(id);
 }

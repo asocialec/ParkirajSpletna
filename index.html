@@ -340,6 +340,57 @@
         getData();
     });
 </script>
+<!-- modal #1 -->
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+          <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal">&times;</button>
+              <h4 class="modal-title">Uredi naslov</h4>
+          </div>
+          <div class="modal-body">
+              <input type = string name="date" id = "date">
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+      </div>
+    </div>
+</div>
+
+<!-- GMaps modal -->
+<div id="modal" class="modal hide fade">
+    <div class="modal-body">
+        <div id="map-canvas"></div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" data-dismiss="modal" class="btn btn-primary" data-value="1">Continue</button>
+        <button type="button" data-dismiss="modal" class="btn" data-value="0">Cancel</button>
+    </div>
+</div>
+
+
+<!-- Delete modal -->
+<div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></button>
+                <h4 class="modal-title custom_align" id="Heading">Izbris vnosa</h4>
+            </div>
+        <div class="modal-body">
+        <div class="alert alert-danger"><span class="glyphicon glyphicon-warning-sign"></span> Želite izbrisati parkiranje?</div>
+        </div>
+        <div class="modal-footer ">
+            <button type="button" class="btn btn-success" ><span class="glyphicon glyphicon-ok-sign"></span> DA</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> NE</button>
+        </div>
+    </div>
+    <!-- /.modal-content --> 
+    </div>
+      <!-- /.modal-dialog --> 
+</div>
 
 </body>
 
