@@ -44,8 +44,9 @@ function showTable (data) {
 function izbrisi(id){
 	$.ajax({
   type: 'DELETE',
-  url: 'http://localhost:8080/ParkirajWeb/web/V1_web/parkingID='+id,
+  url: 'http://localhost:8080/ParkirajWeb/web/V1_delete?parkingID='+id,
   success: function() {
+
     getData();
   }
 });
