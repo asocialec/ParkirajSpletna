@@ -7,6 +7,7 @@ function getData(){
 	  	success: function(data) {
 	  		//JSONdata = data;
 	  		// showTable(data);
+            //   showChart(data);
 	  		//console.log(data.locations);
 	  		var jsonData = JSON.parse(data);
 	  		showTable(jsonData);
@@ -14,6 +15,7 @@ function getData(){
   		},
   		error: function(){
               showTable(); // for testing only
+              showChart();
   			// alert("Napaka pri prikazovanju podatkov!");
   		}
 	});
@@ -32,9 +34,8 @@ function showTable (data) {
 			"<td>" + "1:25" + "</td>" +
 			"<td><span class = 'glyphicon glyphicon-remove' onClick='izbrisi(\"" + item.parkingID + "\")'></span></td>" +
 			// "<td><span class = 'glyphicon glyphicon-edit' data-toggle='modal' data-target='#myModal' onClick='uredi(\"" + item + "\")'></span></td>" +
-            "<td><span class='glyphicon glyphicon-trash' data-toggle='modal' data-target='#delete' onClick='izbrisi(\"" + item.parkingID + "\")'></span></td>" +
+            "<td><span class='glyphicon glyphicon-trash' data-toggle='modal' data-target='#delete' data-book-id='my_id_value' onClick='izbrisi(\"" + item.parkingID + "\")'></span></td>" +
 			"</tr>");
-		// return data;
 	});
     $("[data-toggle=tooltip]").tooltip();
 	$("#tabela table tbody").html(items.join(" "));
@@ -140,4 +141,75 @@ function drawMap(items){
       i++;
     }
 }
+}
+
+// TODO: fix it!
+//triggered when modal is about to be shown
+$('#delete').on('show.bs.modal', function(e) {
+
+    //get data-id attribute of the clicked element
+    var bookId = $(e.relatedTarget).data('book-id');
+
+    //populate the textbox
+    $(e.currentTarget).find('input[name="bookId"]').val(bookId);
+});
+
+
+// Show chart
+function showChart() {
+    data = {"locations":[{"parkingID":33,"latitude":46.0500278,"longitude":14.488073,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-17 12:35:09.0"},{"parkingID":34,"latitude":46.0500301,"longitude":14.488074,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 12:39:36.0"},{"parkingID":35,"latitude":46.0500213,"longitude":14.4879432,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-17 13:02:29.0"},{"parkingID":36,"latitude":46.0500181,"longitude":14.4880478,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 13:37:00.0"},{"parkingID":37,"latitude":46.0500173,"longitude":14.4880554,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 13:37:12.0"},{"parkingID":38,"latitude":46.0500523,"longitude":14.4879745,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 17:02:42.0"},{"parkingID":39,"latitude":46.0500475,"longitude":14.4881284,"address":"&Scaron;krab&#x10d;eva ulica 19a, 1000 Ljubljana","startParking":"2016-01-18 17:56:21.0"}]};
+	var items = [];
+	var i = 0;
+	var j = 0;
+	var $dates = [];	// bad var name :)
+	var numbers = [];
+	$.each(data.locations, function (i, item) {
+		// Parse string to separated values
+		var $datePart = item.startParking.split(/[^0-9]/) // regex: vse, razen stevil
+		
+		// console.log(i, datePart[0], datePart[1], datePart[2], datePart[3], datePart[4], datePart[5]);
+		// Removing hours, minutes and seconds & convert to date data type.
+		var $dateTimestamp = (new Date($datePart[0] + "," + $datePart[1] + "," + $datePart[2]).getTime() / 1000).toFixed(0);
+		// console.log($dateTimestamp);
+
+		// Check if exist. If not --> add. If exist --> increment.
+		// $dates.push($dateTimestamp);
+		// numbers[i] += 1;
+		var found = $.inArray($dateTimestamp, $dates);
+		// console.log("where: "+ found);
+		if (found > -1){
+			numbers[found] += 1;
+			// console.log(numbers[found]);
+		}
+		else{
+			$dates.push($dateTimestamp);
+			numbers.push(1);
+			// console.log(numbers[j]);
+		}
+	});
+	// $("#tabela table tbody").html(items.join(" "));
+	// console.log("dates: " + $dates.length);
+	// console.log("numbers: " + numbers.length);
+	// console.log(numbers[0] + "," + numbers[1]);
+	// console.log($dates[0] + "," + $dates[1]);
+
+	var timeSeriesData = [];
+	for (var i = 0; i <= $dates.length - 1; i++) {
+		timeSeriesData[i] = [$dates[i], numbers[i]];
+		console.log(timeSeriesData[i]);
+	};
+
+	var options = {
+    xaxis: {
+        mode: "time"
+    	}
+	}
+ 
+	$.plot($("#placeholder"),[
+        {                    
+            data: timeSeriesData
+        }
+    ], 
+    options);
+    
 }
