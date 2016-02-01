@@ -172,6 +172,8 @@ function showChart() {
 		var $dateTimestamp = (new Date($datePart[0] + "," + $datePart[1] + "," + $datePart[2]).getTime() / 1000).toFixed(0);
 		// console.log($dateTimestamp);
 
+        // NOTE: jQuery.inArray() deluje samo na enem stolpcu in ne deluje za datume. JS Timestamp je ok.
+        // JS indexOf je počasen pri več podatkih.
 		// Check if exist. If not --> add. If exist --> increment.
 		// $dates.push($dateTimestamp);
 		// numbers[i] += 1;
@@ -187,29 +189,43 @@ function showChart() {
 			// console.log(numbers[j]);
 		}
 	});
-	// $("#tabela table tbody").html(items.join(" "));
+
 	// console.log("dates: " + $dates.length);
-	// console.log("numbers: " + numbers.length);
+	console.log("numbers: " + numbers.length);
 	// console.log(numbers[0] + "," + numbers[1]);
 	// console.log($dates[0] + "," + $dates[1]);
-
-	var timeSeriesData = [];
+    
+    
+    var timeSeriesData = [];
 	for (var i = 0; i <= $dates.length - 1; i++) {
 		timeSeriesData[i] = [$dates[i], numbers[i]];
 		console.log(timeSeriesData[i]);
 	};
-
-	var options = {
-    xaxis: {
-        mode: "time"
-    	}
-	}
- 
-	$.plot($("#placeholder"),[
-        {                    
-            data: timeSeriesData
+    
+    // Pie chart if numbers.length < 5
+    if (numbers.length > 5) {
+        var options = {
+            xaxis: {
+                mode: "time"
+            }
         }
-    ], 
-    options);
+        
+        $.plot($("#placeholder"),[
+            {
+                data: timeSeriesData
+            }
+        ],
+        options);
+            
+    } else {
+        $.plot($('#placeholder'),timeSeriesData, {
+            series: {
+                pie: {
+                    show: true
+                }
+            }
+        });
+    }
+ 
     
 }

@@ -172,11 +172,19 @@ hr.small {
 /* Services */
 
 .services {
-    padding: 50px 0;
+    padding: 5px 0;
+    background: #fff;
 }
 
 .service-item {
     margin-bottom: 30px;
+}
+
+.chart {
+    height: 40vw; 
+    margin-top: 5vw;
+    margin-botton: 5vw;
+    background: #fff";
 }
 
 /* Callout */
