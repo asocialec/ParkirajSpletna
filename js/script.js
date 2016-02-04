@@ -32,15 +32,37 @@ function showTable (data) {
 		items.push("<tr><td>" + item.address + "</td>" + 
 			"<td>" + item.startParking + "</td>" + 
 			"<td>" + "1:25" + "</td>" +
-			"<td><span class = 'glyphicon glyphicon-remove' onClick='izbrisi(\"" + item.parkingID + "\")'></span></td>" +
-			// "<td><span class = 'glyphicon glyphicon-edit' data-toggle='modal' data-target='#myModal' onClick='uredi(\"" + item + "\")'></span></td>" +
-            "<td><span class='glyphicon glyphicon-trash' data-toggle='modal' data-target='#delete' data-book-id='my_id_value' onClick='izbrisi(\"" + item.parkingID + "\")'></span></td>" +
+            "<td><span class='glyphicon glyphicon-trash' data-toggle='modal' data-target='#myModal' onclick='deleteModal(\""+ item.parkingID + "\")'></span></td>" +  
 			"</tr>");
 	});
     $("[data-toggle=tooltip]").tooltip();
 	$("#tabela table tbody").html(items.join(" "));
 	//console.log(data);
 }
+
+function deleteParking(id){
+    var id = $("#temp_edit").val();
+	// console.log("id iz modala: " + id);
+
+	$.ajax({
+  		type: 'DELETE',
+  		url: 'http://localhost:8080/ParkirajWeb/web/V1_web/parkingID='+id,
+  		success: function() {
+    		console.log("Parkiranje izbrisano");
+    		getData();
+  		},
+  		error: function(){
+  			console.log("Napaka pri brisanju podatkov! ID: " + id);
+  		}
+  	});
+}
+
+function deleteModal(parkingID){
+    console.log("funkcija deleteModal");
+    console.log(parkingID);
+	$("#temp_edit").val(parkingID);
+}
+
 
 // ==========================================================================================
 // Delete item
@@ -163,13 +185,14 @@ function showChart() {
 	var j = 0;
 	var $dates = [];	// bad var name :)
 	var numbers = [];
+    var labels = [];
 	$.each(data.locations, function (i, item) {
 		// Parse string to separated values
 		var $datePart = item.startParking.split(/[^0-9]/) // regex: vse, razen stevil
 		
 		// console.log(i, datePart[0], datePart[1], datePart[2], datePart[3], datePart[4], datePart[5]);
 		// Removing hours, minutes and seconds & convert to date data type.
-		var $dateTimestamp = (new Date($datePart[0] + "," + $datePart[1] + "," + $datePart[2]).getTime() / 1000).toFixed(0);
+		var $dateTimestamp = (new Date($datePart[0] + "," + $datePart[1] + "," + $datePart[2]).getTime()).toFixed(0);
 		// console.log($dateTimestamp);
 
         // NOTE: jQuery.inArray() deluje samo na enem stolpcu in ne deluje za datume. JS Timestamp je ok.
@@ -186,21 +209,33 @@ function showChart() {
 		else{
 			$dates.push($dateTimestamp);
 			numbers.push(1);
+            labels.push($datePart[2] + "." + $datePart[1] + "." + $datePart[0]);
 			// console.log(numbers[j]);
 		}
 	});
-
+    // console.log(labels[0]);
 	// console.log("dates: " + $dates.length);
-	console.log("numbers: " + numbers.length);
+	// console.log("numbers: " + numbers.length);
 	// console.log(numbers[0] + "," + numbers[1]);
 	// console.log($dates[0] + "," + $dates[1]);
     
     
     var timeSeriesData = [];
+    var pieSeriesData = [];
 	for (var i = 0; i <= $dates.length - 1; i++) {
-		timeSeriesData[i] = [$dates[i], numbers[i]];
-		console.log(timeSeriesData[i]);
+		var dataLine = {label: + $dates[i], data: numbers[i]};
+        timeSeriesData.push(dataLine);
+        
+        var date = new Date(parseInt($dates[i]));
+        var dateSi = "" + (date.getDate()+1) + "." + date.getMonth()+1 + "." + date.getFullYear();
+        var dataLinePie = {label: dateSi, data: numbers[i]};
+        pieSeriesData.push(dataLinePie);
+        // console.log(dataLinePie);
+        // console.log("Date Si: " + dateSi);
+        // timeSeriesData[i] = "{"+"label: " + $dates[i] + "\"" + ",";
+		// console.log("timeSeriesData: " + timeSeriesData[i]);
 	};
+    // console.log(JSON.stringify(timeSeriesData));
     
     // Pie chart if numbers.length < 5
     if (numbers.length > 5) {
@@ -218,14 +253,57 @@ function showChart() {
         options);
             
     } else {
-        $.plot($('#placeholder'),timeSeriesData, {
+        $.plot($('#placeholder'),pieSeriesData, {
             series: {
                 pie: {
-                    show: true
-                }
-            }
-        });
-    }
+                    show: true,                
+                    label: {
+                        show:true,
+                        radius: 0.8,
+                        formatter: function (label, series) {
+                            return '<div style="border:1px solid grey;font-size:8pt;text-align:center;padding:5px;color:white;">' +
+                            label + ' : ' +
+                            Math.round(series.percent) +
+                            '%</div>';
+                            },
+                            background: {
+                                opacity: 0.8,
+                                color: '#000'
+                                }
+                            }
+                        }
+                    },
+                    legend: {
+                        show: false
+                    },
+                    grid: {
+                        hoverable: true
+                    }
+                }); // end of plot function
+            $("#placeholder").showMemo();
+    } // end of else
  
     
+}
+
+// Pie chart hover
+$.fn.showMemo = function () {
+    $(this).bind("plothover", function (event, pos, item) {
+        if (!item) { return; }
+ 
+        var html = [];
+        var percent = parseFloat(item.series.percent).toFixed(2);        
+ 
+        html.push("<div style=\"border:1px solid grey;background-color:",
+             item.series.color,
+             "\">",
+             "<span style=\"color:white\">",
+             item.series.label,
+             " število parkiranj: ",
+            item.series.data[0][1],
+             " [", percent, " %]",
+             "</span>", 
+             "</div>");
+        $("#flot-memo").html(html.join(''));
+    });
 }
