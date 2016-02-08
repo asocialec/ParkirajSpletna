@@ -28,7 +28,6 @@ body {
     font-size: 4.5em;
     font-weight: 700;
 }
-
 /* Custom Button Styles */
 
 .btn-dark {
@@ -184,7 +183,7 @@ hr.small {
     height: 40vw; 
     margin-top: 5vw;
     margin-botton: 5vw;
-    background: #fff";
+    background: #fff;
 }
 
 /* Callout */

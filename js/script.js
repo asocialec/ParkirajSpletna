@@ -26,12 +26,49 @@ function getData(){
 // Show table
 function showTable (data) {
     // just for testing
-    data = {"locations":[{"parkingID":33,"latitude":46.0500278,"longitude":14.488073,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 12:35:09.0"},{"parkingID":34,"latitude":46.0500301,"longitude":14.488074,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 12:39:36.0"},{"parkingID":35,"latitude":46.0500213,"longitude":14.4879432,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 13:02:29.0"},{"parkingID":36,"latitude":46.0500181,"longitude":14.4880478,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 13:37:00.0"},{"parkingID":37,"latitude":46.0500173,"longitude":14.4880554,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 13:37:12.0"},{"parkingID":38,"latitude":46.0500523,"longitude":14.4879745,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 17:02:42.0"},{"parkingID":39,"latitude":46.0500475,"longitude":14.4881284,"address":"&Scaron;krab&#x10d;eva ulica 19a, 1000 Ljubljana","startParking":"2016-01-18 17:56:21.0"}]};
-	var items = [];
-	$.each(data.locations, function (i, item) {
+    data = {"locations":[{"parkingID":57,"latitude":46.0447325,"longitude":14.4882217,"address":"Tr?a?ka cesta 31, 1000 Ljubljana","startParking":"13:24:18, 1.2.2016"},{"parkingID":56,"latitude":46.0500918,"longitude":14.4879261,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:29:04, 21.1.2016","endTime":"16:29:58, 21.1.2016"},{"parkingID":55,"latitude":46.0500696,"longitude":14.4879438,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:27:42, 21.1.2016"},{"parkingID":54,"latitude":46.050054,"longitude":14.4879437,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:25:37, 21.1.2016"},{"parkingID":49,"latitude":46.0445845,"longitude":14.4888807,"address":"Tr?a?ka cesta 31, 1000 Ljubljana","startParking":"10:23:06, 20.1.2016","endTime":"10:23:31, 20.1.2016"},{"parkingID":48,"latitude":46.0445899,"longitude":14.488904,"address":"Tr?a?ka cesta 25, 1000 Ljubljana","startParking":"10:22:22, 20.1.2016","endTime":"10:22:59, 20.1.2016"},{"parkingID":43,"latitude":46.0500509,"longitude":14.4880253,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"18:09:02, 19.1.2016","endTime":"18:09:10, 19.1.2016"},{"parkingID":42,"latitude":46.0500591,"longitude":14.4879478,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"17:55:28, 19.1.2016","endTime":"18:08:46, 19.1.2016"},{"parkingID":41,"latitude":46.0473171,"longitude":14.4885017,"address":"Oslavijska ulica 9, 1000 Ljubljana","startParking":"16:44:01, 19.1.2016"},{"parkingID":39,"latitude":46.0500475,"longitude":14.4881284,"address":"?krab?eva ulica 19a, 1000 Ljubljana","startParking":"17:56:21, 18.1.2016"},{"parkingID":38,"latitude":46.0500523,"longitude":14.4879745,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"17:02:42, 18.1.2016"},{"parkingID":37,"latitude":46.0500173,"longitude":14.4880554,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"13:37:12, 18.1.2016"},{"parkingID":36,"latitude":46.0500181,"longitude":14.4880478,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"13:37:00, 18.1.2016"}]};
+	var tempItems = [];
+    var tempStartParking;
+    var tempEndParking;
+    // parse, clean, convert ...
+    $.each(data.locations, function(i, item){
+        var tempObj = {};
+        tempObj.parkingID = item.parkingID;
+        tempObj.latitude = item.latitude;
+        tempObj.longitude = item.longitude;
+        tempObj.address = item.address;
+        // reformat start parking
+        var StartDatePart = item.startParking.split(/[^0-9]/) // regex: vse, razen stevil
+        tempObj.startParking = StartDatePart[4] + ". " + StartDatePart[5] + ". " + StartDatePart[6] + " - " + StartDatePart[0] + ":" + StartDatePart[1];
+        console.log(tempObj.startParking);
+        
+        // check if endTime exist
+        // calculate time diff
+        if (item['endTime']) {
+            var EndDatePart = item.endTime.split(/[^0-9]/) // regex: vse, razen stevil
+            // 0: hour, 1: min, 2: sec, 3: / 4: day, 5: month, 6: year
+            var tempStartParking = (new Date(StartDatePart[6] + "/" + StartDatePart[5] + "/" + StartDatePart[4] + " " + StartDatePart[0] + ":" + StartDatePart[1] + ":" + StartDatePart[2])).getTime();
+            var tempEndParking = (new Date(EndDatePart[6] + "/" + EndDatePart[5] + "/" + EndDatePart[4] + " " + EndDatePart[0] + ":" + EndDatePart[1] + ":" + EndDatePart[2])).getTime();
+            //    console.log("tempStartParking: " + tempStartParking);
+            //    console.log("tempEndparking: " + tempEndParking);
+            var timeDiff = tempEndParking-tempStartParking;
+            var diffSeconds = timeDiff / 1000 % 60;
+            var diffMinutes = Math.round(timeDiff / (60 * 1000) % 60);
+            var diffHours = Math.round(timeDiff / (60 * 60 * 1000) % 24);
+            tempObj.duration = diffHours.pad(2) + ":" + diffMinutes.pad(2);
+        }
+        else{
+            tempObj.duration = "/";
+        }
+        tempItems.push(tempObj);
+    });
+    // console.log(JSON.stringify(tempItems));
+    
+    var items = [];
+	$.each(tempItems, function (i, item) {
 		items.push("<tr><td>" + item.address + "</td>" + 
 			"<td>" + item.startParking + "</td>" + 
-			"<td>" + "1:25" + "</td>" +
+			"<td>" + item.duration + "</td>" +
             "<td><span class='glyphicon glyphicon-trash' data-toggle='modal' data-target='#myModal' onclick='deleteModal(\""+ item.parkingID + "\")'></span></td>" +  
 			"</tr>");
 	});
@@ -40,6 +77,9 @@ function showTable (data) {
 	//console.log(data);
 }
 
+
+// ==========================================================================================
+// Delete item. Confirmation modal.
 function deleteParking(id){
     var id = $("#temp_edit").val();
 	// console.log("id iz modala: " + id);
@@ -78,24 +118,12 @@ function izbrisi(id){
 
 
 // ==========================================================================================
-// Edit item
-// TODO:
-    // Open new google maps instance in bootstrap modal.
-    // Enable marker editing
-    // Reverse geocoder to get address from marker position
-function uredi(item){
-    $.ajax({})
-	// alert(item.id);
-}
-
-
-// ==========================================================================================
 // Show google maps inside iFrame
 function showMapsIFrame() {
       // TO-DO: GET JSON from somewhere (ajax)
   // http://rest.learncode.academy/api/jernejm/lokacije
 
-   locations = {"locations":[{"parkingID":33,"latitude":46.0500278,"longitude":14.488073,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 12:35:09.0"},{"parkingID":34,"latitude":46.0500301,"longitude":14.488074,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 12:39:36.0"},{"parkingID":35,"latitude":46.0500213,"longitude":14.4879432,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 13:02:29.0"},{"parkingID":36,"latitude":46.0500181,"longitude":14.4880478,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 13:37:00.0"},{"parkingID":37,"latitude":46.0500173,"longitude":14.4880554,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 13:37:12.0"},{"parkingID":38,"latitude":46.0500523,"longitude":14.4879745,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 17:02:42.0"},{"parkingID":39,"latitude":46.0500475,"longitude":14.4881284,"address":"&Scaron;krab&#x10d;eva ulica 19a, 1000 Ljubljana","startParking":"2016-01-18 17:56:21.0"}]};
+   locations = {"locations":[{"parkingID":57,"latitude":46.0447325,"longitude":14.4882217,"address":"Tr?a?ka cesta 31, 1000 Ljubljana","startParking":"13:24:18, 1.2.2016"},{"parkingID":56,"latitude":46.0500918,"longitude":14.4879261,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:29:04, 21.1.2016","endTime":"16:29:58, 21.1.2016"},{"parkingID":55,"latitude":46.0500696,"longitude":14.4879438,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:27:42, 21.1.2016"},{"parkingID":54,"latitude":46.050054,"longitude":14.4879437,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:25:37, 21.1.2016"},{"parkingID":49,"latitude":46.0445845,"longitude":14.4888807,"address":"Tr?a?ka cesta 31, 1000 Ljubljana","startParking":"10:23:06, 20.1.2016","endTime":"10:23:31, 20.1.2016"},{"parkingID":48,"latitude":46.0445899,"longitude":14.488904,"address":"Tr?a?ka cesta 25, 1000 Ljubljana","startParking":"10:22:22, 20.1.2016","endTime":"10:22:59, 20.1.2016"},{"parkingID":43,"latitude":46.0500509,"longitude":14.4880253,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"18:09:02, 19.1.2016","endTime":"18:09:10, 19.1.2016"},{"parkingID":42,"latitude":46.0500591,"longitude":14.4879478,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"17:55:28, 19.1.2016","endTime":"18:08:46, 19.1.2016"},{"parkingID":41,"latitude":46.0473171,"longitude":14.4885017,"address":"Oslavijska ulica 9, 1000 Ljubljana","startParking":"16:44:01, 19.1.2016"},{"parkingID":39,"latitude":46.0500475,"longitude":14.4881284,"address":"?krab?eva ulica 19a, 1000 Ljubljana","startParking":"17:56:21, 18.1.2016"},{"parkingID":38,"latitude":46.0500523,"longitude":14.4879745,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"17:02:42, 18.1.2016"},{"parkingID":37,"latitude":46.0500173,"longitude":14.4880554,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"13:37:12, 18.1.2016"},{"parkingID":36,"latitude":46.0500181,"longitude":14.4880478,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"13:37:00, 18.1.2016"}]};
 
    var locations;
    var items = [];
@@ -114,7 +142,7 @@ function showMapsIFrame() {
       },
       error: function(){
           console.log("Error. Go to drawmap().");
-          console.log(locations.locations);
+        //   console.log(locations.locations);
           $.each(locations.locations, function(key, item){
               //console.log(item.address);
               items.push(item.latitude, item.longitude, item.address);
@@ -126,8 +154,8 @@ function showMapsIFrame() {
 
 function drawMap(items){
 
-    console.log(items);
-    console.log(items[0], items[1], items[2]);
+    // console.log(items);
+    // console.log(items[0], items[1], items[2]);
 
     var map = new google.maps.Map(document.getElementById('map'), {
       zoom: 12, // TO-DO: auto zoom using latlngbound.center
@@ -165,21 +193,10 @@ function drawMap(items){
 }
 }
 
-// TODO: fix it!
-//triggered when modal is about to be shown
-$('#delete').on('show.bs.modal', function(e) {
-
-    //get data-id attribute of the clicked element
-    var bookId = $(e.relatedTarget).data('book-id');
-
-    //populate the textbox
-    $(e.currentTarget).find('input[name="bookId"]').val(bookId);
-});
-
 
 // Show chart
 function showChart() {
-    data = {"locations":[{"parkingID":33,"latitude":46.0500278,"longitude":14.488073,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-17 12:35:09.0"},{"parkingID":34,"latitude":46.0500301,"longitude":14.488074,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 12:39:36.0"},{"parkingID":35,"latitude":46.0500213,"longitude":14.4879432,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-17 13:02:29.0"},{"parkingID":36,"latitude":46.0500181,"longitude":14.4880478,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 13:37:00.0"},{"parkingID":37,"latitude":46.0500173,"longitude":14.4880554,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 13:37:12.0"},{"parkingID":38,"latitude":46.0500523,"longitude":14.4879745,"address":"&Scaron;krab&#x10d;eva ulica 21a, 1000 Ljubljana","startParking":"2016-01-18 17:02:42.0"},{"parkingID":39,"latitude":46.0500475,"longitude":14.4881284,"address":"&Scaron;krab&#x10d;eva ulica 19a, 1000 Ljubljana","startParking":"2016-01-18 17:56:21.0"}]};
+    data = {"locations":[{"parkingID":57,"latitude":46.0447325,"longitude":14.4882217,"address":"Tr?a?ka cesta 31, 1000 Ljubljana","startParking":"13:24:18, 1.2.2016"},{"parkingID":56,"latitude":46.0500918,"longitude":14.4879261,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:29:04, 21.1.2016","endTime":"16:29:58, 21.1.2016"},{"parkingID":55,"latitude":46.0500696,"longitude":14.4879438,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:27:42, 21.1.2016"},{"parkingID":54,"latitude":46.050054,"longitude":14.4879437,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:25:37, 21.1.2016"},{"parkingID":49,"latitude":46.0445845,"longitude":14.4888807,"address":"Tr?a?ka cesta 31, 1000 Ljubljana","startParking":"10:23:06, 20.1.2016","endTime":"10:23:31, 20.1.2016"},{"parkingID":48,"latitude":46.0445899,"longitude":14.488904,"address":"Tr?a?ka cesta 25, 1000 Ljubljana","startParking":"10:22:22, 20.1.2016","endTime":"10:22:59, 20.1.2016"},{"parkingID":43,"latitude":46.0500509,"longitude":14.4880253,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"18:09:02, 19.1.2016","endTime":"18:09:10, 19.1.2016"},{"parkingID":42,"latitude":46.0500591,"longitude":14.4879478,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"17:55:28, 19.1.2016","endTime":"18:08:46, 19.1.2016"},{"parkingID":41,"latitude":46.0473171,"longitude":14.4885017,"address":"Oslavijska ulica 9, 1000 Ljubljana","startParking":"16:44:01, 19.1.2016"},{"parkingID":39,"latitude":46.0500475,"longitude":14.4881284,"address":"?krab?eva ulica 19a, 1000 Ljubljana","startParking":"17:56:21, 18.1.2016"},{"parkingID":38,"latitude":46.0500523,"longitude":14.4879745,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"17:02:42, 18.1.2016"},{"parkingID":37,"latitude":46.0500173,"longitude":14.4880554,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"13:37:12, 18.1.2016"},{"parkingID":36,"latitude":46.0500181,"longitude":14.4880478,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"13:37:00, 18.1.2016"}]};
 	var items = [];
 	var i = 0;
 	var j = 0;
@@ -190,9 +207,10 @@ function showChart() {
 		// Parse string to separated values
 		var $datePart = item.startParking.split(/[^0-9]/) // regex: vse, razen stevil
 		
-		// console.log(i, datePart[0], datePart[1], datePart[2], datePart[3], datePart[4], datePart[5]);
+        // 0: hour, 1: min, 2: sec, 3: / 4: day, 5: month, 6: year
+		// console.log(i, $datePart[0], $datePart[1], $datePart[2], $datePart[4], $datePart[5], $datePart[6]);
 		// Removing hours, minutes and seconds & convert to date data type.
-		var $dateTimestamp = (new Date($datePart[0] + "," + $datePart[1] + "," + $datePart[2]).getTime()).toFixed(0);
+		var $dateTimestamp = (new Date($datePart[6] + "," + $datePart[5] + "," + $datePart[4]).getTime()).toFixed(0);
 		// console.log($dateTimestamp);
 
         // NOTE: jQuery.inArray() deluje samo na enem stolpcu in ne deluje za datume. JS Timestamp je ok.
@@ -209,7 +227,7 @@ function showChart() {
 		else{
 			$dates.push($dateTimestamp);
 			numbers.push(1);
-            labels.push($datePart[2] + "." + $datePart[1] + "." + $datePart[0]);
+            labels.push($datePart[4] + ". " + $datePart[5] + ". " + $datePart[6]);
 			// console.log(numbers[j]);
 		}
 	});
@@ -223,7 +241,10 @@ function showChart() {
     var timeSeriesData = [];
     var pieSeriesData = [];
 	for (var i = 0; i <= $dates.length - 1; i++) {
-		var dataLine = {label: + $dates[i], data: numbers[i]};
+		// var dataLine = {label: + $dates[i], data: numbers[i]};
+        var dataLine = [$dates[i], numbers[i]];
+        // dataLine.push($dates[i], numbers[i]);
+        // console.log(dataLine);
         timeSeriesData.push(dataLine);
         
         var date = new Date(parseInt($dates[i]));
@@ -236,9 +257,10 @@ function showChart() {
 		// console.log("timeSeriesData: " + timeSeriesData[i]);
 	};
     // console.log(JSON.stringify(timeSeriesData));
+    // console.log(JSON.stringify(pieSeriesData));
     
     // Pie chart if numbers.length < 5
-    if (numbers.length > 5) {
+    if (numbers.length > 20) {
         var options = {
             xaxis: {
                 mode: "time"
@@ -252,6 +274,11 @@ function showChart() {
         ],
         options);
             
+    } else if(numbers.length >= 5) {
+      $.plot($("#placeholder"), [timeSeriesData], {
+          bars: {show:true, barWidth: 1000*60*60*10},
+          xaxis: { mode: "time" } }
+	);  
     } else {
         $.plot($('#placeholder'),pieSeriesData, {
             series: {
@@ -307,3 +334,10 @@ $.fn.showMemo = function () {
         $("#flot-memo").html(html.join(''));
     });
 }
+
+// Format hours and minutes in table
+Number.prototype.pad = function(size) {
+      var s = String(this);
+      while (s.length < (size || 2)) {s = "0" + s;}
+      return s;
+    }
