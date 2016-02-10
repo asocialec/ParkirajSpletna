@@ -11,12 +11,13 @@ function getData(){
 	  		//console.log(data.locations);
 	  		var jsonData = JSON.parse(data);
 	  		showTable(jsonData);
+        showChart(jsonData);
 
   		},
   		error: function(){
-              showTable(); // for testing only
-              showChart();
-  			// alert("Napaka pri prikazovanju podatkov!");
+              //showTable(); // for testing only
+              //showChart();
+  			alert("Napaka pri prikazovanju podatkov!");
   		}
 	});
 	
@@ -26,7 +27,7 @@ function getData(){
 // Show table
 function showTable (data) {
     // just for testing
-    data = {"locations":[{"parkingID":57,"latitude":46.0447325,"longitude":14.4882217,"address":"Tr?a?ka cesta 31, 1000 Ljubljana","startParking":"13:24:18, 1.2.2016"},{"parkingID":56,"latitude":46.0500918,"longitude":14.4879261,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:29:04, 21.1.2016","endTime":"16:29:58, 21.1.2016"},{"parkingID":55,"latitude":46.0500696,"longitude":14.4879438,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:27:42, 21.1.2016"},{"parkingID":54,"latitude":46.050054,"longitude":14.4879437,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:25:37, 21.1.2016"},{"parkingID":49,"latitude":46.0445845,"longitude":14.4888807,"address":"Tr?a?ka cesta 31, 1000 Ljubljana","startParking":"10:23:06, 20.1.2016","endTime":"10:23:31, 20.1.2016"},{"parkingID":48,"latitude":46.0445899,"longitude":14.488904,"address":"Tr?a?ka cesta 25, 1000 Ljubljana","startParking":"10:22:22, 20.1.2016","endTime":"10:22:59, 20.1.2016"},{"parkingID":43,"latitude":46.0500509,"longitude":14.4880253,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"18:09:02, 19.1.2016","endTime":"18:09:10, 19.1.2016"},{"parkingID":42,"latitude":46.0500591,"longitude":14.4879478,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"17:55:28, 19.1.2016","endTime":"18:08:46, 19.1.2016"},{"parkingID":41,"latitude":46.0473171,"longitude":14.4885017,"address":"Oslavijska ulica 9, 1000 Ljubljana","startParking":"16:44:01, 19.1.2016"},{"parkingID":39,"latitude":46.0500475,"longitude":14.4881284,"address":"?krab?eva ulica 19a, 1000 Ljubljana","startParking":"17:56:21, 18.1.2016"},{"parkingID":38,"latitude":46.0500523,"longitude":14.4879745,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"17:02:42, 18.1.2016"},{"parkingID":37,"latitude":46.0500173,"longitude":14.4880554,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"13:37:12, 18.1.2016"},{"parkingID":36,"latitude":46.0500181,"longitude":14.4880478,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"13:37:00, 18.1.2016"}]};
+    //data = {"locations":[{"parkingID":57,"latitude":46.0447325,"longitude":14.4882217,"address":"Tr?a?ka cesta 31, 1000 Ljubljana","startParking":"13:24:18, 1.2.2016"},{"parkingID":56,"latitude":46.0500918,"longitude":14.4879261,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:29:04, 21.1.2016","endTime":"16:29:58, 21.1.2016"},{"parkingID":55,"latitude":46.0500696,"longitude":14.4879438,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:27:42, 21.1.2016"},{"parkingID":54,"latitude":46.050054,"longitude":14.4879437,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:25:37, 21.1.2016"},{"parkingID":49,"latitude":46.0445845,"longitude":14.4888807,"address":"Tr?a?ka cesta 31, 1000 Ljubljana","startParking":"10:23:06, 20.1.2016","endTime":"10:23:31, 20.1.2016"},{"parkingID":48,"latitude":46.0445899,"longitude":14.488904,"address":"Tr?a?ka cesta 25, 1000 Ljubljana","startParking":"10:22:22, 20.1.2016","endTime":"10:22:59, 20.1.2016"},{"parkingID":43,"latitude":46.0500509,"longitude":14.4880253,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"18:09:02, 19.1.2016","endTime":"18:09:10, 19.1.2016"},{"parkingID":42,"latitude":46.0500591,"longitude":14.4879478,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"17:55:28, 19.1.2016","endTime":"18:08:46, 19.1.2016"},{"parkingID":41,"latitude":46.0473171,"longitude":14.4885017,"address":"Oslavijska ulica 9, 1000 Ljubljana","startParking":"16:44:01, 19.1.2016"},{"parkingID":39,"latitude":46.0500475,"longitude":14.4881284,"address":"?krab?eva ulica 19a, 1000 Ljubljana","startParking":"17:56:21, 18.1.2016"},{"parkingID":38,"latitude":46.0500523,"longitude":14.4879745,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"17:02:42, 18.1.2016"},{"parkingID":37,"latitude":46.0500173,"longitude":14.4880554,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"13:37:12, 18.1.2016"},{"parkingID":36,"latitude":46.0500181,"longitude":14.4880478,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"13:37:00, 18.1.2016"}]};
 	var tempItems = [];
     var tempStartParking;
     var tempEndParking;
@@ -86,7 +87,7 @@ function deleteParking(id){
 
 	$.ajax({
   		type: 'DELETE',
-  		url: 'http://localhost:8080/ParkirajWeb/web/V1_web/parkingID='+id,
+  		url: 'http://localhost:8080/ParkirajWeb/web/V1_web?parkingID='+id,
   		success: function() {
     		console.log("Parkiranje izbrisano");
     		getData();
@@ -109,7 +110,7 @@ function deleteModal(parkingID){
 function izbrisi(id){
 	$.ajax({
         type: 'DELETE',
-        url: 'http://localhost:8080/ParkirajWeb/web/V1_web/parkingID='+id,
+        url: 'http://localhost:8080/ParkirajWeb/web/V1_web?parkingID='+id,
         success: function() {
             getData();
             }
@@ -119,11 +120,11 @@ function izbrisi(id){
 
 // ==========================================================================================
 // Show google maps inside iFrame
-function showMapsIFrame() {
+function showMapsIFrame(data) {
       // TO-DO: GET JSON from somewhere (ajax)
   // http://rest.learncode.academy/api/jernejm/lokacije
 
-   locations = {"locations":[{"parkingID":57,"latitude":46.0447325,"longitude":14.4882217,"address":"Tr?a?ka cesta 31, 1000 Ljubljana","startParking":"13:24:18, 1.2.2016"},{"parkingID":56,"latitude":46.0500918,"longitude":14.4879261,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:29:04, 21.1.2016","endTime":"16:29:58, 21.1.2016"},{"parkingID":55,"latitude":46.0500696,"longitude":14.4879438,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:27:42, 21.1.2016"},{"parkingID":54,"latitude":46.050054,"longitude":14.4879437,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:25:37, 21.1.2016"},{"parkingID":49,"latitude":46.0445845,"longitude":14.4888807,"address":"Tr?a?ka cesta 31, 1000 Ljubljana","startParking":"10:23:06, 20.1.2016","endTime":"10:23:31, 20.1.2016"},{"parkingID":48,"latitude":46.0445899,"longitude":14.488904,"address":"Tr?a?ka cesta 25, 1000 Ljubljana","startParking":"10:22:22, 20.1.2016","endTime":"10:22:59, 20.1.2016"},{"parkingID":43,"latitude":46.0500509,"longitude":14.4880253,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"18:09:02, 19.1.2016","endTime":"18:09:10, 19.1.2016"},{"parkingID":42,"latitude":46.0500591,"longitude":14.4879478,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"17:55:28, 19.1.2016","endTime":"18:08:46, 19.1.2016"},{"parkingID":41,"latitude":46.0473171,"longitude":14.4885017,"address":"Oslavijska ulica 9, 1000 Ljubljana","startParking":"16:44:01, 19.1.2016"},{"parkingID":39,"latitude":46.0500475,"longitude":14.4881284,"address":"?krab?eva ulica 19a, 1000 Ljubljana","startParking":"17:56:21, 18.1.2016"},{"parkingID":38,"latitude":46.0500523,"longitude":14.4879745,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"17:02:42, 18.1.2016"},{"parkingID":37,"latitude":46.0500173,"longitude":14.4880554,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"13:37:12, 18.1.2016"},{"parkingID":36,"latitude":46.0500181,"longitude":14.4880478,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"13:37:00, 18.1.2016"}]};
+   //locations = {"locations":[{"parkingID":57,"latitude":46.0447325,"longitude":14.4882217,"address":"Tr?a?ka cesta 31, 1000 Ljubljana","startParking":"13:24:18, 1.2.2016"},{"parkingID":56,"latitude":46.0500918,"longitude":14.4879261,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:29:04, 21.1.2016","endTime":"16:29:58, 21.1.2016"},{"parkingID":55,"latitude":46.0500696,"longitude":14.4879438,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:27:42, 21.1.2016"},{"parkingID":54,"latitude":46.050054,"longitude":14.4879437,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:25:37, 21.1.2016"},{"parkingID":49,"latitude":46.0445845,"longitude":14.4888807,"address":"Tr?a?ka cesta 31, 1000 Ljubljana","startParking":"10:23:06, 20.1.2016","endTime":"10:23:31, 20.1.2016"},{"parkingID":48,"latitude":46.0445899,"longitude":14.488904,"address":"Tr?a?ka cesta 25, 1000 Ljubljana","startParking":"10:22:22, 20.1.2016","endTime":"10:22:59, 20.1.2016"},{"parkingID":43,"latitude":46.0500509,"longitude":14.4880253,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"18:09:02, 19.1.2016","endTime":"18:09:10, 19.1.2016"},{"parkingID":42,"latitude":46.0500591,"longitude":14.4879478,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"17:55:28, 19.1.2016","endTime":"18:08:46, 19.1.2016"},{"parkingID":41,"latitude":46.0473171,"longitude":14.4885017,"address":"Oslavijska ulica 9, 1000 Ljubljana","startParking":"16:44:01, 19.1.2016"},{"parkingID":39,"latitude":46.0500475,"longitude":14.4881284,"address":"?krab?eva ulica 19a, 1000 Ljubljana","startParking":"17:56:21, 18.1.2016"},{"parkingID":38,"latitude":46.0500523,"longitude":14.4879745,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"17:02:42, 18.1.2016"},{"parkingID":37,"latitude":46.0500173,"longitude":14.4880554,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"13:37:12, 18.1.2016"},{"parkingID":36,"latitude":46.0500181,"longitude":14.4880478,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"13:37:00, 18.1.2016"}]};
 
    var locations;
    var items = [];
@@ -195,8 +196,8 @@ function drawMap(items){
 
 
 // Show chart
-function showChart() {
-    data = {"locations":[{"parkingID":57,"latitude":46.0447325,"longitude":14.4882217,"address":"Tr?a?ka cesta 31, 1000 Ljubljana","startParking":"13:24:18, 1.2.2016"},{"parkingID":56,"latitude":46.0500918,"longitude":14.4879261,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:29:04, 21.1.2016","endTime":"16:29:58, 21.1.2016"},{"parkingID":55,"latitude":46.0500696,"longitude":14.4879438,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:27:42, 21.1.2016"},{"parkingID":54,"latitude":46.050054,"longitude":14.4879437,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:25:37, 21.1.2016"},{"parkingID":49,"latitude":46.0445845,"longitude":14.4888807,"address":"Tr?a?ka cesta 31, 1000 Ljubljana","startParking":"10:23:06, 20.1.2016","endTime":"10:23:31, 20.1.2016"},{"parkingID":48,"latitude":46.0445899,"longitude":14.488904,"address":"Tr?a?ka cesta 25, 1000 Ljubljana","startParking":"10:22:22, 20.1.2016","endTime":"10:22:59, 20.1.2016"},{"parkingID":43,"latitude":46.0500509,"longitude":14.4880253,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"18:09:02, 19.1.2016","endTime":"18:09:10, 19.1.2016"},{"parkingID":42,"latitude":46.0500591,"longitude":14.4879478,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"17:55:28, 19.1.2016","endTime":"18:08:46, 19.1.2016"},{"parkingID":41,"latitude":46.0473171,"longitude":14.4885017,"address":"Oslavijska ulica 9, 1000 Ljubljana","startParking":"16:44:01, 19.1.2016"},{"parkingID":39,"latitude":46.0500475,"longitude":14.4881284,"address":"?krab?eva ulica 19a, 1000 Ljubljana","startParking":"17:56:21, 18.1.2016"},{"parkingID":38,"latitude":46.0500523,"longitude":14.4879745,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"17:02:42, 18.1.2016"},{"parkingID":37,"latitude":46.0500173,"longitude":14.4880554,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"13:37:12, 18.1.2016"},{"parkingID":36,"latitude":46.0500181,"longitude":14.4880478,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"13:37:00, 18.1.2016"}]};
+function showChart(data) {
+    //data = {"locations":[{"parkingID":57,"latitude":46.0447325,"longitude":14.4882217,"address":"Tr?a?ka cesta 31, 1000 Ljubljana","startParking":"13:24:18, 1.2.2016"},{"parkingID":56,"latitude":46.0500918,"longitude":14.4879261,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:29:04, 21.1.2016","endTime":"16:29:58, 21.1.2016"},{"parkingID":55,"latitude":46.0500696,"longitude":14.4879438,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:27:42, 21.1.2016"},{"parkingID":54,"latitude":46.050054,"longitude":14.4879437,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"16:25:37, 21.1.2016"},{"parkingID":49,"latitude":46.0445845,"longitude":14.4888807,"address":"Tr?a?ka cesta 31, 1000 Ljubljana","startParking":"10:23:06, 20.1.2016","endTime":"10:23:31, 20.1.2016"},{"parkingID":48,"latitude":46.0445899,"longitude":14.488904,"address":"Tr?a?ka cesta 25, 1000 Ljubljana","startParking":"10:22:22, 20.1.2016","endTime":"10:22:59, 20.1.2016"},{"parkingID":43,"latitude":46.0500509,"longitude":14.4880253,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"18:09:02, 19.1.2016","endTime":"18:09:10, 19.1.2016"},{"parkingID":42,"latitude":46.0500591,"longitude":14.4879478,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"17:55:28, 19.1.2016","endTime":"18:08:46, 19.1.2016"},{"parkingID":41,"latitude":46.0473171,"longitude":14.4885017,"address":"Oslavijska ulica 9, 1000 Ljubljana","startParking":"16:44:01, 19.1.2016"},{"parkingID":39,"latitude":46.0500475,"longitude":14.4881284,"address":"?krab?eva ulica 19a, 1000 Ljubljana","startParking":"17:56:21, 18.1.2016"},{"parkingID":38,"latitude":46.0500523,"longitude":14.4879745,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"17:02:42, 18.1.2016"},{"parkingID":37,"latitude":46.0500173,"longitude":14.4880554,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"13:37:12, 18.1.2016"},{"parkingID":36,"latitude":46.0500181,"longitude":14.4880478,"address":"?krab?eva ulica 21a, 1000 Ljubljana","startParking":"13:37:00, 18.1.2016"}]};
 	var items = [];
 	var i = 0;
 	var j = 0;
@@ -274,7 +275,7 @@ function showChart() {
         ],
         options);
             
-    } else if(numbers.length >= 5) {
+    } else if(numbers.length >= 6) {
       $.plot($("#placeholder"), [timeSeriesData], {
           bars: {show:true, barWidth: 1000*60*60*10},
           xaxis: { mode: "time" } }
